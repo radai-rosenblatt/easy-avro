@@ -1,0 +1,9 @@
+{
+  "type": "enum",
+  "name": "Type",
+  "namespace": "com.acme",
+  "symbols": [
+    "A",
+    "B"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "Pojo",
+  "namespace": "com.acme",
+  "fields": [
+    {
+      "name": "f1",
+      "type": "string"
+    },
+    {
+      "name": "f2",
+      "type": [
+        "null",
+        "int"
+      ]
+    }
+  ]
+}

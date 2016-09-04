@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "RecordB",
+  "namespace": "com.acme.b",
+  "fields": [
+    {
+      "name": "type",
+      "type": "com.acme.Type"
+    }
+  ]
+}
