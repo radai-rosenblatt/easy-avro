@@ -21,10 +21,13 @@ import org.apache.avro.MultiSchemaParser;
 import org.apache.avro.Schema;
 import org.apache.avro.compiler.specific.SpecificCompilerEx;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AvroCodeGenerator {
     private String inputEncoding = "UTF-8";
@@ -38,10 +41,11 @@ public class AvroCodeGenerator {
         this.outputEncoding = outputEncoding;
     }
 
-    public void generateSpecificClasses(Collection<Path> avroFiles, Path outputRoot) throws IOException {
+    public Set<Path> generateSpecificClasses(Collection<Path> avroFiles, Path outputRoot) throws IOException {
         Collection<Schema> schemata = MultiSchemaParser.parse(avroFiles, Charset.forName(inputEncoding));
         SpecificCompilerEx compiler = new SpecificCompilerEx(schemata);
         compiler.setOutputCharacterEncoding(outputEncoding);
-        compiler.compile(outputRoot);
+        Set<File> filesWritten = compiler.compile(outputRoot);
+        return filesWritten.stream().map(File::toPath).collect(Collectors.toSet());
     }
 }

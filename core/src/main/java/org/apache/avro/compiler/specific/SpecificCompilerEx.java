@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 
 //this exists here because SpecificCompiler.OutputFile is package private
@@ -63,15 +65,19 @@ public class SpecificCompilerEx extends SpecificCompiler {
         return arr;
     }
 
-    public void compile(Path outputRoot) throws IOException {
-        compile(outputRoot.toFile());
+    public Set<File> compile(Path outputRoot) throws IOException {
+        return compile(outputRoot.toFile());
     }
 
-    public void compile(File outputRoot) throws IOException {
+    public Set<File> compile(File outputRoot) throws IOException {
+        Set<File> results = new HashSet<>();
         Collection<SpecificCompiler.OutputFile> outFiles = compile();
         for (SpecificCompiler.OutputFile file : outFiles) {
             //normalize separators to be the current OS ones, just in case.
-            file.writeToDestination(new File(file.path.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator))), outputRoot);
+            File src = new File(file.path.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
+            File written = file.writeToDestination(src, outputRoot);
+            results.add(written);
         }
+        return results;
     }
 }

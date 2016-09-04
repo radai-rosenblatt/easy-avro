@@ -32,6 +32,26 @@
 
     <name>easy-avro</name>
 
+    <licenses>
+        <license>
+            <name>The GNU Lesser General Public License, version 3.0</name>
+            <url>https://opensource.org/licenses/LGPL-3.0</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Radai Rosenblatt</name>
+            <email>radai.rosenblatt@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/radai-rosenblatt/easy-avro.git</connection>
+        <developerConnection>scm:git:https://github.com/radai-rosenblatt/easy-avro.git</developerConnection>
+        <url>https://github.com/radai-rosenblatt/easy-avro</url>
+    </scm>
+
     <properties>
         <log4j2.version>2.6.2</log4j2.version>
         <avro.version>1.8.1</avro.version>
@@ -111,6 +131,11 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.12</version>
+            </dependency>
+            <dependency>
+                <groupId>net.radai.compilib</groupId>
+                <artifactId>compilib</artifactId>
+                <version>0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

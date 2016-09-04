@@ -17,19 +17,23 @@
 
 package net.radai.easyavro.core;
 
+import net.radai.compilib.Compilib;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AvroCodeGeneratorTest {
     @Test
@@ -54,7 +58,16 @@ public class AvroCodeGeneratorTest {
         Path outDir = Files.createTempDirectory(null);
 
         AvroCodeGenerator gen = new AvroCodeGenerator();
-        gen.generateSpecificClasses(avroFiles, outDir);
-        //TODO - verify results exist and compile
+        gen.setInputEncoding("UTF-8");
+        gen.setOutputEncoding("UTF-8");
+        Set<Path> sourceFiles = gen.generateSpecificClasses(avroFiles, outDir);
+        Set<String> contents = sourceFiles.stream().map(path -> {
+            try {
+                return new String(Files.readAllBytes(path), Charset.forName("UTF-8"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toSet());
+        Map<String, Class<?>> classes = Compilib.compile(contents);
     }
 }
