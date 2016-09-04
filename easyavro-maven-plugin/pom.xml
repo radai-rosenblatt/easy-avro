@@ -24,7 +24,7 @@
     <parent>
         <groupId>net.radai.easyavro</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>easyavro-maven-plugin</artifactId>
@@ -50,7 +50,6 @@
         <dependency>
             <groupId>net.radai.easyavro</groupId>
             <artifactId>core</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <!-- libs -->
@@ -70,6 +69,12 @@
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>file-management</artifactId>
+        </dependency>
+        <dependency>
+            <!-- maven logging is slf4j-based starting with 3.1 -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
+            <version>${log4j2.version}</version>
         </dependency>
     </dependencies>
 

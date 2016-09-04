@@ -41,20 +41,26 @@ import java.util.Set;
 @Mojo(name = "codegen", threadSafe = true, defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CodegenMojo extends AbstractMojo {
 
-    @Parameter
-    private List<String> sourcePaths = null;
-
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/avro")
-    private File outputPath;
-
     @Parameter(defaultValue="${project}", readonly=true, required=true)
     private MavenProject project;
+
+    @Parameter(defaultValue = "${project.build.sourceEncoding}" )
+    private String inputEncoding;
+
+    @Parameter(defaultValue = "${project.build.sourceEncoding}" )
+    private String outputEncoding;
+
+    @Parameter
+    private List<String> sourcePaths = null;
 
     @Parameter
     private String[] includes = new String[] {"**/*.avsc", "**/*.avpr", "**/*.avdl"};
 
     @Parameter
     private String[] excludes = new String[0];
+
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/avro")
+    private File outputPath;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
@@ -67,10 +73,12 @@ public class CodegenMojo extends AbstractMojo {
             log.warn("found no avro files");
             return;
         }
-        log.info("found " + files.size() + " avro file(s)");
+        log.info("using " + inputEncoding + " to parse " + files.size() + " avro file(s) and " + outputEncoding + " to generate java files");
 
         //generate java code from source files
         AvroCodeGenerator generator = new AvroCodeGenerator();
+        generator.setInputEncoding(inputEncoding);
+        generator.setOutputEncoding(outputEncoding);
         try {
             generator.generateSpecificClasses(files, outputPath.toPath());
         } catch (IOException e) {

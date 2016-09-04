@@ -22,14 +22,26 @@ import org.apache.avro.Schema;
 import org.apache.avro.compiler.specific.SpecificCompilerEx;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Collection;
 
 public class AvroCodeGenerator {
+    private String inputEncoding = "UTF-8";
+    private String outputEncoding = "UTF-8";
+
+    public void setInputEncoding(String inputEncoding) {
+        this.inputEncoding = inputEncoding;
+    }
+
+    public void setOutputEncoding(String outputEncoding) {
+        this.outputEncoding = outputEncoding;
+    }
 
     public void generateSpecificClasses(Collection<Path> avroFiles, Path outputRoot) throws IOException {
-        Collection<Schema> schemata = MultiSchemaParser.parse(avroFiles);
+        Collection<Schema> schemata = MultiSchemaParser.parse(avroFiles, Charset.forName(inputEncoding));
         SpecificCompilerEx compiler = new SpecificCompilerEx(schemata);
+        compiler.setOutputCharacterEncoding(outputEncoding);
         compiler.compile(outputRoot);
     }
 }

@@ -19,8 +19,14 @@ package org.apache.avro;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.JsonParser;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,18 +36,29 @@ public class MultiSchemaParser {
     private static final Logger log = LogManager.getLogger(MultiSchemaParser.class);
 
     public static Collection<Schema> parse(Collection<Path> avroFiles) {
+        return parse(avroFiles, null);
+    }
+
+    public static Collection<Schema> parse(Collection<Path> avroFiles, Charset encodedIn) {
+        Charset cs = encodedIn;
+        if (cs == null) {
+            cs = Charset.defaultCharset();
+            log.warn("charset not provided, using system default " + cs.displayName());
+        }
         Set<Path> remaining = new HashSet<>(avroFiles);
         Schema.Names names = new Schema.Names();
         while (!remaining.isEmpty()) {
             Throwable firstThisIteration = null;
             Set<Path> parsedThisIteration = new HashSet<>();
             for (Path r : remaining) {
-                try {
+                try (InputStream is = Files.newInputStream(r, StandardOpenOption.READ);
+                     InputStreamReader reader = new InputStreamReader(is, cs)) {
                     //copy names, because a failed compilation will pollute it
                     Schema.Names namesCopy = new Schema.Names();
                     namesCopy.putAll(names);
 
-                    Schema schema = Schema.parse(Schema.MAPPER.readTree(Schema.FACTORY.createJsonParser(r.toFile())), namesCopy);
+                    JsonParser jsonParser = Schema.FACTORY.createJsonParser(reader);
+                    Schema schema = Schema.parse(Schema.MAPPER.readTree(jsonParser), namesCopy);
                     log.debug("successfully parsed {}", r);
                     parsedThisIteration.add(r);
                     names.add(schema); //now that we know it was successfully compiled
